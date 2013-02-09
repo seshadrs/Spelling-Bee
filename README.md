@@ -1,4 +1,4 @@
 Spelling-Bee
 ============
 
-A dynamic-prog spell checker implementation in JAVA
+A dynamic-programming spell checker implementation in JAVA
