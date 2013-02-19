@@ -10,14 +10,14 @@ import spell.util.Utils;
 public class Levenshtein {
 	
 	public enum PruningType { MAX_DISTANCE, BEAM_WIDTH };
-	public class PruningStrategy 
+	public class Pruning
 	{ 
 		
 		PruningType type;
 		
 		double value;
 		
-		PruningStrategy( PruningType p, double x)
+		Pruning( PruningType p, double x)
 		{
 			this.type = p;
 			this.value = x;
@@ -30,6 +30,22 @@ public class Levenshtein {
 	public int deletionCost=1;
 	public int matchingCost=0;
 	
+	
+	public int prunedCost(int[][] trellis, int y, int x, boolean match)
+	{	//compute minimum only over nodes that are valid
+		
+		return Utils.min( 
+				trellis[y][x-1]+insertionCost, 
+				trellis[y+1][x-1]+((match)? matchingCost : 1), 
+				trellis[y+1][x] + deletionCost
+				);
+		
+//		return Utils.min( 
+//				(validity[y][x-1])? trellis[y][x-1]+insertionCost: Integer.MAX_VALUE , 
+//				(validity[y+1][x-1] && match)?trellis[y+1][x-1]+matchingCost: Integer.MAX_VALUE, 
+//				(validity[y+1][x])? trellis[y+1][x] + deletionCost: Integer.MAX_VALUE
+//				);
+	}
 	
 	
 	public int LevenshteinDistance(char[] x, char[] y)
@@ -53,20 +69,14 @@ public class Levenshtein {
 		{
 			for(int j=1; j<ylen; j++)	//from 2nd row onwards
 			{
-				if (x[i]==y[j])	//matches
-				{
-					trellis[ylen-1-j][i] = Utils.min( trellis[ylen-1-j][i-1]+insertionCost, trellis[ylen-1-j+1][i-1]+matchingCost, trellis[ylen-1-j+1][i] + deletionCost);
-				}
-				else 
-				{
-					trellis[ylen-1-j][i] = Utils.min( trellis[ylen-1-j][i-1]+insertionCost, trellis[ylen-1-j+1][i] + deletionCost);
-				}
+				trellis[ylen-1-j][i] = prunedCost(trellis, ylen-1-j, i, x[i]==y[j]);
 			}
 		}
 		
 		
 		Utils.displayTrellis(trellis, x, y);
-		return 0;
+		
+		return trellis[0][xlen-1];	//the farthest cell on the diagonal contains the total cost
 		
 	}
 	
@@ -84,17 +94,45 @@ public class Levenshtein {
 	}
 	
 	
+	private static int minimum(int a, int b, int c) 
+	{
+	        return Math.min(Math.min(a, b), c);
+	}
+	
+	public static int computeLevenshteinDistance(String str1,String str2) 
+	{
+	        int[][] distance = new int[str1.length() + 1][str2.length() + 1];
+	
+	        for (int i = 0; i <= str1.length(); i++)
+	                distance[i][0] = i;
+	        for (int j = 1; j <= str2.length(); j++)
+	                distance[0][j] = j;
+	
+	        for (int i = 1; i <= str1.length(); i++)
+	                for (int j = 1; j <= str2.length(); j++)
+	                        distance[i][j] = minimum(
+	                                        distance[i - 1][j] + 1,
+	                                        distance[i][j - 1] + 1,
+	                                        distance[i - 1][j - 1]
+	                                                        + ((str1.charAt(i - 1) == str2.charAt(j - 1)) ? 0 : 1));
+	        
+	        Utils.displayTrellis(distance, (" "+str2).toCharArray(), (" "+str1).toCharArray());
+	        return distance[str1.length()][str2.length()];
+	}
+	
+
+	
 	public static void main(String args[])
 	{
 		String a = "testing";
 		String b = "tastesaing";
 		Levenshtein l = new Levenshtein();
 		int distanceAB = l.distance(a,b);
-		System.out.println(distanceAB);
+//		System.out.println(distanceAB);
 		
-		a = "abcxyz";
-		b = "abcdefg";
-		distanceAB = l.distance(a,b);
+		b = "abcxyz";
+		a = "abcdefg";
+		distanceAB = l.distance(b,a);
 //		System.out.println(distanceAB);
 		
 	}
