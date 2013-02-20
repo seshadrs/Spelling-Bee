@@ -130,13 +130,11 @@ public class VectorLevenshtein {
 		}
 		
 		
-//		Utils.displayTrellis(trellis, x, y);
-		
 		return trellis;	//the farthest cell on the diagonal contains the total cost
 		
 	}
 	
-	public int distance(ArrayList<String> A, ArrayList<String> B)
+	public int showDistance(ArrayList<String> A, ArrayList<String> B)
 	{
 		A.add(0,"");
 		B.add(0,"");
@@ -155,6 +153,23 @@ public class VectorLevenshtein {
 		Utils.lineBreak();
 		
 		Utils.displayTrellis(res.trellis, a, b, res.path);
+		System.out.println("Total of "+res.insertionCount+" Insertions, "+res.deletionCount+" Deletions, "+res.substitutionCount+" Substitutions.");
+		return res.distance;
+		
+	}
+	
+	
+	public int distance(ArrayList<String> A, ArrayList<String> B)
+	{
+		A.add(0,"");
+		B.add(0,"");
+		
+		String[] a = A.toArray(new String[A.size()]);
+		String[] b = B.toArray(new String[B.size()]);
+		
+		int[][] costMatrix = LevenshteinDistance(a,b);
+		AlignmentResult res = new AlignmentResult(costMatrix);
+		
 		System.out.println("Total of "+res.insertionCount+" Insertions, "+res.deletionCount+" Deletions, "+res.substitutionCount+" Substitutions.");
 		return res.distance;
 		
@@ -186,7 +201,7 @@ public class VectorLevenshtein {
 		//no pruning
 		System.out.println();
 		VectorLevenshtein l = new VectorLevenshtein();
-		l.distance(input, template);
+		l.showDistance(input, template);
 		
 		
 		
