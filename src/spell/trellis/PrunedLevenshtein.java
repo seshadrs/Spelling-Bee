@@ -216,7 +216,7 @@ public class PrunedLevenshtein {
 		
 	}
 	
-	public int distance(String A, String B, PruningType type, int prunigValue)
+	public int showDistance(String A, String B, PruningType type, int prunigValue)
 	{
 		//add dummy character in beginning to bootstrap distance trellis
 		A = " " + A;
@@ -241,6 +241,22 @@ public class PrunedLevenshtein {
 		
 		
 		return res.distance;
+		
+	}
+	
+	public int distance(String A, String B, PruningType type, int prunigValue)
+	{
+		//add dummy character in beginning to bootstrap distance trellis
+		A = " " + A;
+		B = " " + B;
+		
+		char[] a = A.toCharArray();
+		char[] b = B.toCharArray();
+		
+		Pruning p = new Pruning(type, prunigValue);
+		int[][] costMatrix = LevenshteinDistance(a,b,p);
+		
+		return costMatrix[0][costMatrix[0].length-1];	//the total alignment cost cell
 		
 	}
 	
@@ -272,7 +288,7 @@ public class PrunedLevenshtein {
 			
 			System.out.println();
 			PrunedLevenshtein l = new PrunedLevenshtein();
-			l.distance(input, template,(pruning.contains("max"))? PruningType.MAX_DISTANCE:PruningType.BEAM_WIDTH, pruningValue);
+			l.showDistance(input, template,(pruning.contains("max"))? PruningType.MAX_DISTANCE:PruningType.BEAM_WIDTH, pruningValue);
 			
 		}
 		else
@@ -280,7 +296,7 @@ public class PrunedLevenshtein {
 			//no pruning
 			System.out.println();
 			PrunedLevenshtein l = new PrunedLevenshtein();
-			l.distance(input, template, PruningType.MAX_DISTANCE, Integer.MAX_VALUE);
+			l.showDistance(input, template, PruningType.MAX_DISTANCE, Integer.MAX_VALUE);
 		}
 		
 		
