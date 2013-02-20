@@ -48,6 +48,31 @@ public class Utils {
 	}
 	
 	
+	public static void displayTrellis(int[][] trellis, String[] x, String[] y)
+	{
+		for (int i=0; i< trellis.length;i++)
+			{
+			if(i!=trellis.length-1)
+				System.out.print("'"+y[y.length-1-i]+"'\t\t\t");
+			else
+				System.out.print("\t\t\t");		
+			for (int j=0; j< trellis[i].length;j++)
+				if (trellis[i][j]==Integer.MAX_VALUE)
+					System.out.print("-\t\t\t");
+				else
+					System.out.print(trellis[i][j]+"\t\t\t");
+			
+			System.out.println("\n"); 
+			}
+		
+		System.out.print("\t\t\t");		//offset 
+		System.out.print("\t\t\t");		//offset for the dummy char
+		for(int k=1; k<x.length; k++)
+			System.out.print("'"+x[k]+"'\t\t\t");
+		System.out.println("\n");
+	}
+	
+	
 	public static void lineBreak()
 	{//prints a line separator
 		for(int i=0; i< 85; i++)
@@ -82,6 +107,37 @@ public class Utils {
 	System.out.println("\n");
 		
 	}
+	
+	
+	public static void displayTrellis(int[][] trellis, String[] x, String[] y, Integer[][] path) 
+	{
+		for (int i=0; i< trellis.length;i++)
+		{
+			if (i!=trellis.length-1)
+				System.out.print("'"+y[y.length-1-i]+"'\t\t\t");
+			else
+				System.out.print("\t\t\t");
+		for (int j=0; j< trellis[i].length;j++)
+			if (trellis[i][j]==Integer.MAX_VALUE)
+				System.out.print("-\t\t\t");
+			else
+				if (path!=null && indexInPath(path, i, j))
+					System.out.print("*"+trellis[i][j]+"*\t\t\t");
+				else
+					System.out.print(trellis[i][j]+"\t\t\t");
+		
+		System.out.println("\n"); 
+		}
+	
+	System.out.print("\t\t\t\t\t\t");		//offset for the dummy char
+	
+	for(int k=1; k<x.length; k++)
+		System.out.print("'"+x[k]+"'\t\t\t");
+	System.out.println("\n");
+		
+	}
+	
+	
 
 	private static boolean indexInPath(Integer[][] path, int i, int j) {
 		
