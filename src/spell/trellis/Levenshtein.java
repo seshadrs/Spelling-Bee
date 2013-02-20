@@ -29,6 +29,7 @@ public class Levenshtein {
 	public int insertionCost=1;
 	public int deletionCost=1;
 	public int matchingCost=0;
+	public int substitutionCost=1;
 	
 	
 	public int prunedCost(int[][] trellis, int y, int x, boolean match)
@@ -36,15 +37,10 @@ public class Levenshtein {
 		
 		return Utils.min( 
 				trellis[y][x-1]+insertionCost, 
-				trellis[y+1][x-1]+((match)? matchingCost : 1), 
+				trellis[y+1][x-1]+((match)? matchingCost : substitutionCost), 
 				trellis[y+1][x] + deletionCost
 				);
 		
-//		return Utils.min( 
-//				(validity[y][x-1])? trellis[y][x-1]+insertionCost: Integer.MAX_VALUE , 
-//				(validity[y+1][x-1] && match)?trellis[y+1][x-1]+matchingCost: Integer.MAX_VALUE, 
-//				(validity[y+1][x])? trellis[y+1][x] + deletionCost: Integer.MAX_VALUE
-//				);
 	}
 	
 	
