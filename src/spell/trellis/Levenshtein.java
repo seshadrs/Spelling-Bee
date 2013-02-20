@@ -131,6 +131,11 @@ public class Levenshtein {
 		distanceAB = l.distance(b,a);
 //		System.out.println(distanceAB);
 		
+		b = "geafad";
+		a = "asdasf";
+		distanceAB = l.distance(b,a);
+//		System.out.println(distanceAB);
+		
 	}
 
 }

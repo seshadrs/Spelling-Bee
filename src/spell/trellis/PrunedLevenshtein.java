@@ -7,6 +7,7 @@ import java.util.Stack;
 import java.util.regex.*;
 
 import spell.util.Utils;
+import java.util.Scanner;
 
 public class PrunedLevenshtein {
 	
@@ -35,6 +36,7 @@ public class PrunedLevenshtein {
 			this.distance = costMatrix[0][costMatrix[0].length-1];
 			if (distance!=Integer.MAX_VALUE)
 				this.path = this.calcPath(trellis);
+			
 		}
 		
 		
@@ -55,14 +57,14 @@ public class PrunedLevenshtein {
 				if(xPos==1 && yPos==ylen-2)
 					break;
 				
-				if (trellis[yPos][xPos-1] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]))
+				if (trellis[yPos][xPos-1] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]) && yPos!=ylen-1 && xPos-1!=0)
 						{
 							path[i][0]=yPos;
 							path[i][1]=xPos-1;
 							
 							xPos -=1;
 						}
-				else if (trellis[yPos+1][xPos-1] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]))
+				else if (trellis[yPos+1][xPos-1] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]) && yPos+1!=ylen-1 && xPos-1!=0)
 						{
 							path[i][0]=yPos+1;
 							path[i][1]=xPos-1;
@@ -70,13 +72,14 @@ public class PrunedLevenshtein {
 							yPos+=1;
 							xPos-=1;
 						}
-				else if (trellis[yPos+1][xPos] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]))
+				else if (trellis[yPos+1][xPos] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]) && yPos+1!=ylen-1 && xPos!=0)
 				{
 						path[i][0]=yPos+1;
 						path[i][1]=xPos;
 						
 						yPos+=1;
 				}
+				
 				
 			}
 			
@@ -227,11 +230,15 @@ public class PrunedLevenshtein {
 		
 		AlignmentResult res = new AlignmentResult(costMatrix);
 		
+		Utils.lineBreak();
+		if (res.distance==Integer.MAX_VALUE)
+			System.out.println("TRELLIS. No Alignment was found");
+		else
+			System.out.println("TRELLIS AND  ONE OF THE BEST-ALIGNMENT PATHS");
+		Utils.lineBreak();
+		
 		Utils.displayTrellis(res.trellis, A.toCharArray(), B.toCharArray(), res.path);
 		
-//		for(int i=0; i< res.path.length; i++)
-//			System.out.print(res.path[i][0]+" "+res.path[i][1]+"\t");
-//		System.out.println();
 		
 		return res.distance;
 		
@@ -240,18 +247,42 @@ public class PrunedLevenshtein {
 	
 	public static void main(String args[])
 	{
-		int d=4;
+		Scanner s = new Scanner(System.in);
+		String template, input, pruning ;
+		int pruningValue;
 		
-		String a = "testing";
-		String b = "tastesaing";
-		PrunedLevenshtein l = new PrunedLevenshtein();
-		int distanceAB = l.distance(a,b,PruningType.MAX_DISTANCE, d);
-//		System.out.println(distanceAB);
+		System.out.print("ENTER TEMPLATE: ");
+		template = s.next();
+		System.out.println();
 		
-		a = "abcxyz";
-		b = "abcdefg";
-		distanceAB = l.distance(a,b,PruningType.BEAM_WIDTH, d);
-//		System.out.println(distanceAB);
+		System.out.print("ENTER INPUT: ");
+		input = s.next();
+		System.out.println();
+		
+		System.out.print("PRUNING max/bw/no ?: ");
+		pruning = s.next();
+		System.out.println();
+		
+		
+		if (pruning.contains("max") || pruning.contains("bw"))
+		{
+			System.out.print("PRUNING Value(int): ");
+			pruningValue = Integer.parseInt(s.next());
+			System.out.println();
+			
+			System.out.println();
+			PrunedLevenshtein l = new PrunedLevenshtein();
+			l.distance(input, template,(pruning.contains("max"))? PruningType.MAX_DISTANCE:PruningType.BEAM_WIDTH, pruningValue);
+			
+		}
+		else
+		{
+			//no pruning
+			System.out.println();
+			PrunedLevenshtein l = new PrunedLevenshtein();
+			l.distance(input, template, PruningType.MAX_DISTANCE, Integer.MAX_VALUE);
+		}
+		
 		
 	}
 

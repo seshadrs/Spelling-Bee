@@ -50,7 +50,7 @@ public class Utils {
 	
 	public static void lineBreak()
 	{//prints a line separator
-		for(int i=0; i< 20; i++)
+		for(int i=0; i< 85; i++)
 			System.out.print("=");
 		System.out.println();
 	}
@@ -59,23 +59,26 @@ public class Utils {
 	{
 		for (int i=0; i< trellis.length;i++)
 		{
-		System.out.print("<"+y[y.length-1-i]+">\t");
+			if (i!=trellis.length-1)
+				System.out.print("'"+y[y.length-1-i]+"'\t");
+			else
+				System.out.print("\t");
 		for (int j=0; j< trellis[i].length;j++)
 			if (trellis[i][j]==Integer.MAX_VALUE)
 				System.out.print("-\t");
 			else
-				if (indexInPath(path, i, j))
-					System.out.print(trellis[i][j]+"*\t");
+				if (path!=null && indexInPath(path, i, j))
+					System.out.print("*"+trellis[i][j]+"*\t");
 				else
 					System.out.print(trellis[i][j]+"\t");
 		
 		System.out.println("\n"); 
 		}
 	
-	System.out.print("\t");		//offset for the dummy char
+	System.out.print("\t\t");		//offset for the dummy char
 	
-	for(int k=0; k<x.length; k++)
-		System.out.print("<"+x[k]+">\t");
+	for(int k=1; k<x.length; k++)
+		System.out.print("'"+x[k]+"'\t");
 	System.out.println("\n");
 		
 	}
