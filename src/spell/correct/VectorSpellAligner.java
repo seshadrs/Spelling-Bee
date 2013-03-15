@@ -59,6 +59,7 @@ public class VectorSpellAligner {
 		System.out.println("ALIGNING SPELLING CORRECTED TEXT WITH CLEAN TEXT\n");
 		VectorLevenshtein vl = new VectorLevenshtein();
 		vl.distance(cleanDocument, correctedDocument);
+		vl.distance(cleanDocument, document);
 		
 	}
 
