@@ -4,32 +4,55 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import spell.correct.TreeSpellChecker;
+
 public class LexTree {
 	
 	public class Node{
 		
 		char val;
 		ArrayList<Node> children;
-		int[] costCol;	//cost column in trellis, for this char
 		Node parent;
+		int depth;
 		
 		
-		Node(char x, Node parent)
+		Node(char x, Node parent, int depth)
 		{
 			this.val = x;
 			this.parent = parent;
 			this.children = null;
+			this.depth = depth;
 		}
 		
 		
-		public boolean hasChild(char c)
+		public char getVal()
+		{
+			return this.val;
+		}
+		
+		public Node getParent()
+		{
+			return this.parent;
+		}
+		
+		public int getDepth()
+		{
+			return this.depth;
+		}
+		
+		public ArrayList<Node> getChildren()
+		{
+			return this.children;
+		}
+		
+		public boolean hasNonLeafChild(char c)
 		{
 			if (this.children==null || this.children.size()==0)
 				return false;
 			
 			for(Node n : this.children)
 			{
-				if (n.val==c)
+				if (n.val==c && (n.children!=null && n.children.size()!=0))
 					return true;
 			}
 			
@@ -38,7 +61,7 @@ public class LexTree {
 		
 		public Node addChild(char c, Node cur)
 		{
-			Node child = new Node(c, cur);
+			Node child = new Node(c, cur, cur.depth+1);
 			
 			if (this.children==null)
 				this.children = new ArrayList<LexTree.Node>();
@@ -49,8 +72,6 @@ public class LexTree {
 		
 		public Node getChild(char c)
 		{
-			Node child;
-			
 			for(Node n : this.children)
 				if (n.val==c)
 					return n;
@@ -60,14 +81,24 @@ public class LexTree {
 		
 	}
 	
-	Node root;
+	public Node root;
+	public static char rootChar = '*';
+	public static boolean verbose = false;
 	
-	LexTree()
+	public LexTree(Set<String> dictionary)
 	{
-		this.root = new Node('*', null);
+		this.root = new Node(rootChar, null,0);
+		this.populate(dictionary);
 	}
 	
-	public void populate(Set<String> dictionary)
+	public LexTree(Set<String> dictionary, boolean verbosity)
+	{
+		this.root = new Node(rootChar, null,0);
+		this.verbose = verbosity;
+		this.populate(dictionary);
+	}
+	
+	private void populate(Set<String> dictionary)
 	{
 		int len,i;
 		char c;
@@ -75,6 +106,8 @@ public class LexTree {
 		
 		for(String w : dictionary)	//for every word in dict
 		{
+			
+			
 			//move cur pointer to root of tree
 			cur = this.root;
 			
@@ -83,25 +116,28 @@ public class LexTree {
 			for(i=0; i<len-1; i++)	//from 0 to last but one char
 			{
 				c = w.charAt(i);
-				if (cur.hasChild(c))
+				if (cur.hasNonLeafChild(c))
 				{
 					cur = cur.getChild(c);
-					System.out.print("-");
+					if (this.verbose)
+						System.out.print("-");
 					continue;
 					
 				}
 				else
-				{
-					System.out.print("+");
+				{	if (this.verbose)
+						System.out.print("+");
 					cur = cur.addChild(c,cur);
 				}
 			}
 			
 			//add last character in word
-			System.out.print("+");
-			cur.addChild(w.charAt(len-1),cur);
+			if (this.verbose)
+				System.out.print("+");
+			cur = cur.addChild(w.charAt(len-1),cur);
+			if (this.verbose)
+				System.out.println("\t"+w);
 			
-			System.out.println("\t"+w);
 			
 		}
 		
@@ -112,8 +148,7 @@ public class LexTree {
 	{
 		
 		Set<String> dict = IO.getWordDictionary("data/WordDictionary.txt");
-		LexTree t = new LexTree();
-		t.populate(dict);
+		LexTree t = new LexTree(dict,true);
 		
 	}
 	

@@ -65,7 +65,7 @@ public class VectorLevenshtein {
 							yPos+=1;
 							xPos-=1;
 							
-							if (trellis[yPos+1][xPos-1]!=trellis[yPos][xPos])	//is the don't match, it is a substitution
+							if (trellis[yPos+1][xPos-1]!=trellis[yPos][xPos])	//is the don't wordMatch, it is a substitution
 								this.substitutionCount+=1;
 						}
 				else if (trellis[yPos+1][xPos] == Utils.min(trellis[yPos][xPos-1],trellis[yPos+1][xPos-1],trellis[yPos+1][xPos]) && yPos+1!=ylen-1 && xPos!=0)
