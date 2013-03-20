@@ -132,6 +132,9 @@ public class TreeSpellChecker {
 		
 		for(String incorrectWord : document)
 		{
+			if (incorrectWord.compareTo("")==0)
+				continue;
+			
 			String input = incorrectWord;
 			PriorityQueue<Result> suggestions = tsc.spellCorrect(input);
 			String bestMatches = "";

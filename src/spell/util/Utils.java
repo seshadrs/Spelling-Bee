@@ -148,5 +148,17 @@ public class Utils {
 				
 		return false;
 	}
+
+	public static int min(int[] prevCost) {
+		int minCost = prevCost[0];
+		int cost;
+		for(int i=1; i< prevCost.length; i++)
+		{
+			cost = prevCost[i];
+			if(cost<minCost)
+				minCost = cost;
+		}
+		return minCost;
+	}
 	
 }
